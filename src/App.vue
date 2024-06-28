@@ -1,29 +1,41 @@
 <template>
-	<router-view />
-	<!-- <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
-  </div>
-  <HelloWorld msg="Vite + Vue" /> -->
+	<div class="layout">
+		<el-container>
+			<el-aside v-if="isLoginOrReg" class="sider">
+				<menu-bar></menu-bar>
+			</el-aside>
+			<el-container>
+				<el-header v-if="isLoginOrReg"> HEAD </el-header>
+				<el-main>
+					<router-view></router-view>
+				</el-main>
+			</el-container>
+		</el-container>
+	</div>
 </template>
+
 <script setup>
+import { useRouter } from "vue-router"
+import { computed } from "vue"
+import MenuBar from "@/layout/menu/index.vue"
+const router = useRouter()
+const isLoginOrReg = computed(() => {
+	const currentPath = router.currentRoute.value.path
+	return !(currentPath === "/login" || currentPath === "/register")
+})
 </script>
 
 <style scoped>
-.logo {
-	height: 6em;
-	padding: 1.5em;
-	will-change: filter;
-	transition: filter 300ms;
+.layout {
+	display: flex;
+	width: 100%;
+	height: 100%;
+	flex-direction: column;
 }
-.logo:hover {
-	filter: drop-shadow(0 0 2em #646cffaa);
+.sider {
+  width: 200px;
+  padding: 0px;
+  margin: 0px;
 }
-.logo.vue:hover {
-	filter: drop-shadow(0 0 2em #42b883aa);
-}
+
 </style>
