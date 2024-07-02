@@ -21,7 +21,11 @@ import MenuBar from "@/layout/menu/index.vue"
 const router = useRouter()
 const isLoginOrReg = computed(() => {
 	const currentPath = router.currentRoute.value.path
-	return !(currentPath === "/login" || currentPath === "/register")
+	return !(
+		currentPath === "/login" ||
+		currentPath === "/register" ||
+		currentPath === "/"
+	)
 })
 </script>
 
@@ -33,9 +37,8 @@ const isLoginOrReg = computed(() => {
 	flex-direction: column;
 }
 .sider {
-  width: 200px;
-  padding: 0px;
-  margin: 0px;
+	width: 200px;
+	padding: 0px;
+	margin: 0px;
 }
-
 </style>

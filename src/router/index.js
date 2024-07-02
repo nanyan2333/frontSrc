@@ -1,5 +1,5 @@
-import Layout from '@/layout/index.vue'
 import { createWebHistory, createRouter } from 'vue-router'
+import usePermissionStore from '../store/module/permission';
 export const constantRoutes = [
     {
         path: '/',
@@ -19,7 +19,7 @@ export const constantRoutes = [
     {
         path: '/index',
         name: 'index',
-        component: ()=>import('@/views/index.vue'),  
+        component: () => import('@/views/index.vue'),
     },
     {
         path: '/history',
@@ -29,18 +29,32 @@ export const constantRoutes = [
     {
         path: '/reserve',
         name: 'reserve',
-        component:() => import('@/views/reserve/index.vue'),
+        component: () => import('@/views/reserve/index.vue'),
     },
     {
         path: '/inquiry',
         name: 'inquiry',
         component: () => import('@/views/inquiry/index.vue')
     },
-    
+
 ]
 const router = createRouter({
     history: createWebHistory(),
     routes: constantRoutes,
 });
 
+router.beforeEach((to, from, next) => {
+    const permission = usePermissionStore()
+    console.log(to.path)
+    if (to.path === '/login' || to.path === '/register' || from.path === '/' || from.path === '/login') {
+        next();
+    } else {
+        if (permission.hasPermission(to.path)) {
+            next();
+        } else {
+            //取消跳转
+            alert('权限不足')
+        }
+    }
+});
 export default router;

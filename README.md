@@ -1,5 +1,36 @@
-# Vue 3 + Vite
+# API  
+## /login
+@params {username : string, password  : string}  
+@return {status : bool, role :string ,info :string}
+## /register
+@params {username : string,password : string , position : string, isDocter:bool,...剩下的按数据库命名}  
+@return {status : bool, info : string}
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+## /getPermission
+@params {id : string, role : string}  
+@return {route : array[string],active_name : array[string]}  
+## /updateInfo
+@params {id : string, role: string ,updateInfo : object} 
+@return {status : bool}
 
-Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
+## /addReserve
+@params {pid : string,did : string,time : string}  
+@return {status : bool}
+## /removeReserve
+@params {pid : string,did : string,startTime : string, endTime : string}   
+@return {status : bool}
+## /searchReserve
+@params {id : string,isDoctor:bool}  
+@return {reserve : array[object]}
+
+## /record
+@params {id : string}  
+@return {record:object}
+
+## /history
+@params {id : string}  
+@return {history:object}
+
+## /updateRecord
+@params {id : string, updateInfo : object}  
+@return {status : bool}

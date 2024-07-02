@@ -10,7 +10,7 @@ const userStore = useUserStore()
 onMounted(() => {
 	
     console.log(userStore.username)
-	if (userStore.username == "") {
+	if (userStore.id === "") {
 		router.replace("/login")
 	} else {
 		console.log(111)

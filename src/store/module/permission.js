@@ -4,8 +4,18 @@ const usePermissionStore = defineStore(
     'permisson',
     {
         state: ()=>({
-            routes: []
-        })
+            routes: [],
+            menuName:[]
+        }),
+        actions:{
+            setStates(route,name){
+                this.routes = route;
+                this.menuName = name;
+            },
+            hasPermission(route){
+                return this.routes.includes(route);
+            }
+        }
     }
 )
 

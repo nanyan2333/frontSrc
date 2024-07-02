@@ -16,17 +16,19 @@ const account = ref("")
 const password = ref("")
 const login = () => {
 	if (account.value === "admin") {
-		userStore.username = account.value
-		permissionStore.routes = ["history","inquiry","reserve"]
+		userStore.id = account.value
+		userStore.role = "admin"
+		permissionStore.routes = ["/history","/inquiry","/reserve"]
 	} else {
 		// 假设password是md5加密过的
 		if (password.value === "password") {
-			userStore.username = account.value
-			permissionStore.routes = ["history","inquiry"]
+			userStore.id = account.value
+			permissionStore.routes = ["/history","/inquiry"]
 		} else {
 			alert("password error")
 		}
 	}
+	
 	router.replace("/index")
 }
 </script>

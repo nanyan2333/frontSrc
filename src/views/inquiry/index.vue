@@ -1,3 +1,3 @@
 <template>
-    <p>inquiry</p>
+    <p>reserve</p>
 </template>
