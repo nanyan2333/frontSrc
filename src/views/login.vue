@@ -60,7 +60,7 @@ const options = [
 	{ value: true, label: "医生" },
 	{ value: false, label: "患者" },
 ]
-const ruleRef = ref()
+const ruleRef = ref(null)
 const rules = {
 	account: [
 		{ required: true, message: "请输入账号", trigger: "blur" },
@@ -74,10 +74,9 @@ const rules = {
 }
 
 const loginFunc = () => {
-	const form = loginForm.value
-	form.$refs.loginForm.validate((valid) => {
+	ruleRef.value.validate((valid) => {
 		if (valid) {
-			login(form.account, form.password, form.isDocter).then((res) => {
+			login(loginForm.value.account,loginForm.value.password,loginForm.value.isDocter).then((res) => {
 				if (res.data.status) {
 					userStore.id = form.account
 					userStore.token = res.data.token
