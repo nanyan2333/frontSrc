@@ -1,19 +1,16 @@
-<!-- <template>
-    <div>
-        <p v-for="(pi,i) in permissions.routes" :key="i">
-            {{pi}}
-        </p>
-    </div>
-</template>
-<script setup>
-import usePermissionStore from '@/store/module/permission'
-const permissions = usePermissionStore()
-console.log(permissions.routes);
-
-</script> -->
 <template>
-	<p>index</p>
+	<p>{{ data }}</p>
+	<button @click="testit">click</button>
 </template>
 <script setup>
-import Layout from "@/layout/index.vue"
+import { ref } from "vue"
+import request from '@/utils/request'
+const data = ref("0")
+const testit = () => {
+    request.get('/test').then((res) => {
+        console.log(res.headers)  
+        console.log(res.config)
+        data.value = res.data
+    })
+}
 </script>

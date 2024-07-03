@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { getToken } from "../../utils/auth";
 
 const useUserStore = defineStore(
     'userinfo',
@@ -6,6 +7,7 @@ const useUserStore = defineStore(
         state: ()=>({
             id: "",
             role: "",
+            token: getToken()
         }),
         actions: {
             setId(_id){
