@@ -82,7 +82,7 @@ const userFormRef = ref()
 
 const reigsterForm = ref({
 	password: "",
-	isDocter: null,
+	isDocter: false,
 	idCard: "",
 	certificate: "",
 	specialty: "",
