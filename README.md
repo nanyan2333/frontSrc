@@ -6,18 +6,15 @@
 @params {username : string,password : string , position : string, isDocter:bool,...剩下的按数据库命名}  
 @return {status : bool, msg : string}
 
-## /getRouters  //先别写,这个可能废弃
-@params {id : string, role : string}  
-@return {route : array[string],active_name : array[string]}  
 ## /updateInfo
 @params {id : string, role: string ,updateInfo : object} 
 @return {status : bool, msg : string}
 
 ## /addReserve
-@params {pid : string,did : string,date : string, startTime : string, endTime : string}  
+@params {pid : string,did : string,date : string, timeSeg:string}  
 @return {status : bool, msg : string}
 ## /removeReserve
-@params {pid : string,did : string, date:string, startTime : string, endTime : string}   
+@params {pid : string,did : string, date:string, timeSeg:string}   
 @return {status : bool, msg:string}
 ## /searchReserve
 @params {id : string , isDoctor:bool}  

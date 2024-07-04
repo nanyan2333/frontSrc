@@ -1,8 +1,15 @@
 <template>
 	<el-row>
-		<el-button @click="handleAddDialog" v-if="isPatient" >
-			<el-icon><Plus /></el-icon>新增预约
-		</el-button>
+		<div class="addButtonGroup">
+			<el-button @click="handleAddDialog" v-if="isPatient">
+				<el-icon><Plus /></el-icon>新增预约
+			</el-button>
+		</div>
+	</el-row>
+	<el-row>
+		<el-divider>
+			<el-text size="large"> 我的预约 </el-text>
+		</el-divider>
 	</el-row>
 	<el-row>
 		<reserve-list></reserve-list>
@@ -13,8 +20,7 @@
 			(val) => {
 				isShow = val
 			}
-		">
-	</add-reserve-list>
+		"></add-reserve-list>
 </template>
 
 <script setup>
@@ -25,9 +31,16 @@ import reserveList from "./reserveList.vue"
 
 const user = useUserStore()
 const isShow = ref(false)
-const isPatient = ref(user.isPatient())
+const isPatient = ref(user.isPatient() || user.isAdmin())
 
 const handleAddDialog = () => {
-	isShow.value = true 
+	isShow.value = true
 }
 </script>
+
+<style scoped>
+.addButtonGroup {
+	display: flex;
+	justify-content: flex-end;
+}
+</style>

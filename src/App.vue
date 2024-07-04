@@ -5,8 +5,10 @@
 				<menu-bar></menu-bar>
 			</el-aside>
 			<el-container>
-				<el-header v-if="isLoginOrReg"> HEAD </el-header>
-				<el-main>
+				<el-header v-if="isLoginOrReg"> 
+                    <navi-bar></navi-bar>
+				</el-header>
+				<el-main style="padding: 0;">
 					<router-view></router-view>
 				</el-main>
 			</el-container>
@@ -15,6 +17,7 @@
 </template>
 
 <script setup>
+import NaviBar from "@/layout/navibar/index.vue"
 import { useRouter } from "vue-router"
 import { computed } from "vue"
 import MenuBar from "@/layout/menu/index.vue"

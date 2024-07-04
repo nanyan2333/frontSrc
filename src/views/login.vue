@@ -40,7 +40,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue"
+import { ref,watch } from "vue"
 import { useRouter } from "vue-router"
 import useUserStore from "@/store/module/user"
 import usePermissionStore from "@/store/module/permission"
@@ -53,7 +53,7 @@ const router = useRouter()
 const loginForm = ref({
 	account: "",
 	password: "",
-	isDocter: null,
+	isDocter: true,
 })
 
 const options = [
@@ -85,8 +85,6 @@ const loginFunc = () => {
 					router.replace("/index")
 				} else {
 					alert(res.data.msg)
-					form.password = ""
-					form.account = ""
 				}
 			})
 		}

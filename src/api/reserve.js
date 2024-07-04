@@ -23,3 +23,11 @@ export function motifiedReserve(_old,_newStartTime,_newEndTime) {
 export function removeReserve(data){
     return request.post('/removeReserve', data)
 }
+
+export const searchAvailableTime = (_id,_date) => {
+    const data = {
+        id: _id,
+        date: _date
+    }
+    return request.post('/searchAvailableTime', data)
+}
