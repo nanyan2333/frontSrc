@@ -43,18 +43,18 @@ const router = createRouter({
     routes: constantRoutes,
 });
 
-router.beforeEach((to, from, next) => {
-    const permission = usePermissionStore()
-    console.log(to.path)
-    if (to.path === '/login' || to.path === '/register' || from.path === '/' || from.path === '/login') {
-        next();
-    } else {
-        if (permission.hasPermission(to.path)) {
-            next();
-        } else {
-            //取消跳转
-            alert('权限不足')
-        }
-    }
-});
+// router.beforeEach((to, from, next) => {
+//     const permission = usePermissionStore()
+//     console.log(to.path)
+//     if (to.path === '/login' || to.path === '/register' || from.path === '/' || from.path === '/login') {
+//         next();
+//     } else {
+//         if (permission.hasPermission(to.path)) {
+//             next();
+//         } else {
+//             //取消跳转
+//             alert('权限不足')
+//         }
+//     }
+// });
 export default router;

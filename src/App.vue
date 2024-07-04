@@ -37,7 +37,7 @@ const isLoginOrReg = computed(() => {
 	flex-direction: column;
 }
 .sider {
-	width: 200px;
+	width: 230px;
 	padding: 0px;
 	margin: 0px;
 }

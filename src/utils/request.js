@@ -6,7 +6,7 @@ axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8'
 const router = useRouter()
 const service = axios.create(
     {
-        baseURL: 'http://8.138.127.170:8080', // 请自行替换为您的后端 API 服务器地址
+        baseURL: 'http://8.138.127.170/api', // 请自行替换为您的后端 API 服务器地址
         timeout: 10000
     }
 )

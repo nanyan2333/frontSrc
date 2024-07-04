@@ -78,7 +78,7 @@ const loginFunc = () => {
 		if (valid) {
 			login(loginForm.value.account,loginForm.value.password,loginForm.value.isDocter).then((res) => {
 				if (res.data.status) {
-					userStore.id = form.account
+					userStore.id = loginForm.value.account
 					userStore.token = res.data.token
 					userStore.role = res.data.role
 					setToken(res.data.token)

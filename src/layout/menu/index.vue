@@ -1,58 +1,117 @@
 <template>
 	<el-menu
-	  class="menu"
-	  active-text-color="#3498db"
-	  background-color="#FFC0CB"
-	  :default-active="activeIndex">
-	  <h2 class="menu-title">菜单</h2>
-	  <el-menu-item v-for="(path, index) in permissionStore.routes" :key="index">
-		<router-link :to="path" class="menu-link">{{ path }}</router-link>
-	  </el-menu-item>
+		class="menu"
+		background-color="rgb(48,65,86)"
+		text-color="#fff"
+		active-text-color="#ffd04b"
+		router>
+		<div class="menu-header">
+			<img src="@/assets/icon.svg" alt="Icon" class="menu-logo" />
+			<el-text class="menu-title">说的道理</el-text>
+			<el-text class="menu-subtitle">阿米诺斯</el-text>
+		</div>
+		<el-menu-item index="/index">
+			<template #title>
+				<el-icon><User /></el-icon>
+				<el-text size="large" style="color: #ffffff;">首页</el-text>
+			</template>
+		</el-menu-item>
+		<el-menu-item index="/history" v-if="isPatient || isAdmin">
+			<template #title>
+				<el-icon><Tickets /></el-icon>
+				<el-text size="large" style="color: #ffffff;">历史记录</el-text>
+			</template>
+		</el-menu-item>
+		<el-menu-item index="/reserve">
+			<template #title>
+				<el-icon><EditPen /></el-icon>
+				<el-text size="large" style="color: #ffffff;">预约管理</el-text>
+			</template>
+		</el-menu-item>
+		<el-menu-item index="/inquiry">
+			<template #title>
+				<el-icon><FirstAidKit /></el-icon>
+				<el-text size="large" style="color: #ffffff;">咨询</el-text>
+			</template>
+		</el-menu-item>
+		<el-menu-item index="/edit" v-if="isAdmin">
+			<template #title>
+				<el-icon><Setting /></el-icon>
+				<el-text size="large" style="color: #ffffff;">信息管理</el-text>
+			</template>
+		</el-menu-item>
 	</el-menu>
-  </template>
-  
-  <script setup>
-  import usePermissionStore from "@/store/module/permission.js"
-  import { ref } from "vue"
-  const permissionStore = usePermissionStore()
-  const activeIndex = ref(permissionStore.routes[0])
-  </script>
-  
-  <style scoped>
-  .menu {
-	width: 200px;
-	height: 100vh;
-	padding: 10px;
-	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-	overflow-y: auto;
-  }
-  
-  .menu-title {
-	margin: 0;
-	padding: 10px;
-	font-size: 1.5em;
-	color: #fff;
-	text-align: center;
-  }
-  
-  .menu-link {
-	text-decoration: none;
-	font-size: 1.1em;
-	color: #333;
-	display: block;
-	padding: 10px;
-	border-radius: 4px;
-	transition: background-color 0.3s, color 0.3s;
-  }
-  
-  .menu-link:hover {
-	background-color: #ff99cc;
-	color: #fff;
-  }
-  
-  .el-menu-item.is-active .menu-link {
-	background-color: #ff6699;
-	color: #fff;
-  }
-  </style>
-  
+</template>
+
+<script setup>
+import { ref } from "vue"
+import useUserStore from "@/store/module/user.js"
+const userStore = useUserStore()
+const isAdmin = ref(userStore.isAdmin())
+const isDocter = ref(userStore.isDocter())
+const isPatient = ref(userStore.isPatient())
+watch(
+	() => userStore.role,
+	() => {
+		isAdmin.value = userStore.isAdmin()
+		isDocter.value = userStore.isDocter()
+		isPatient.value = userStore.isPatient()
+	}
+)
+</script>
+
+<style scoped>
+.menu {
+  width: 230px;
+  height: 100vh;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+  background-color: rgb(48, 65, 86);
+}
+
+.menu-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+  margin-left: 0;
+}
+
+.menu-logo {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 10px;
+}
+
+.menu-title {
+  margin: 0;
+  font-size: 1.8em;
+  color: #fff;
+  text-align: center;
+}
+
+.menu-subtitle {
+  margin: 0;
+  font-size: 1.2em;
+  color: #ffd04b;
+  text-align: center;
+}
+
+.el-menu-item {
+  font-size: 1.1em;
+}
+
+.el-menu-item .el-icon {
+  margin-right: 10px;
+}
+
+:deep(.el-menu-item.is-active .el-icon),
+:deep(.el-menu-item.is-active .el-text) {
+  color: #ffd04b !important;
+}
+
+.el-menu-item:hover {
+  background-color: #33475b;
+}
+</style>

@@ -28,19 +28,19 @@ export default defineConfig({
       '~': path.resolve(__dirname, './')
     }
   },
-  // server: {
-  //   port: 80,
-  //   host: true,
-  //   open: true,
-  //   proxy: {
-  //     // https://cn.vitejs.dev/config/#server-proxy
-  //     '/': {
-  //       // target: 'http://124.71.78.224',
-  //       target: 'http://8.138.127.170:8080',
-  //       changeOrigin: true,
-        
-  //     }
-  //   }
-  // },
+  server: {
+    port: 80,
+    host: true,
+    open: true,
+    proxy: {
+      // https://cn.vitejs.dev/config/#server-proxy
+      '/api': {
+        // target: 'http://124.71.78.224',
+        target: 'http://8.138.127.170/api',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '/api'),
+      }
+    }
+  },
 
 })

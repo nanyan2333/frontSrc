@@ -15,12 +15,16 @@ const useUserStore = defineStore(
             },
             setRole(_role){
                 this.role = _role;
+                console.log(this.role);
             },
             isPatient(){
-                return this.role == "patient" || this.role == "admin";
+                return this.role == "patient";
             },
             isDocter(){
-                return this.role == "doctor" || this.role == "admin";
+                return this.role == "doctor";
+            },
+            isAdmin(){
+                return this.role == "admin";
             }
         }
     }

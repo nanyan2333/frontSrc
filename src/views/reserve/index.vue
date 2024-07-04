@@ -28,6 +28,6 @@ const isShow = ref(false)
 const isPatient = ref(user.isPatient())
 
 const handleAddDialog = () => {
-	isShow.value = true
+	isShow.value = true 
 }
 </script>

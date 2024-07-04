@@ -2,6 +2,7 @@
 	<el-table :data="showData" style="width: 100%" v-if="hasData">
 		<el-table-column label="患者id" prop="pid"></el-table-column>
 		<el-table-column label="医生id" prop="did"></el-table-column>
+		<el-table-column label="预约日期" prop="date"></el-table-column>
 		<el-table-column label="起始时间" prop="startTime"></el-table-column>
 		<el-table-column label="结束时间" prop="endTime"></el-table-column>
 		<el-table-column align="right">
@@ -56,22 +57,24 @@ const reserveData = ref([
 	{
 		pid: "65553",
 		did: "10001",
-		startTime: "2022-02-02 10:00:00",
-		endTime: "2022-02-02 12:00:00",
+		date: "2022-02-02",
+		startTime: "10:00:00",
+		endTime: "12:00:00",
 	},
 	{
 		pid: "65554",
-		did: "10002",
-		startTime: "2022-02-03 10:00:00",
-		endTime: "2022-02-03 12:00:00",
+        did: "10002",
+        date: "2022-02-02",
+        startTime: "13:00:00",
+        endTime: "15:00:00",
 	},
 	{
 		pid: "65555",
-		did: "10003",
-		startTime: "2022-02-04 10:00:00",
-		endTime: "2022-02-04 12:00:00",
-	},
-	//...
+        did: "10003",
+        date: "2022-02-02",
+        startTime: "16:00:00",
+        endTime: "18:00:00",
+	}
 ])
 const searchId = ref("")
 const motifyItem = ref({
@@ -79,6 +82,7 @@ const motifyItem = ref({
 	did: "",
 	startTime: "",
 	endTime: "",
+	date: ""
 })
 const motifiedItem = ref({
 	startTime: "",

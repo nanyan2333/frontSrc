@@ -14,27 +14,31 @@
 @return {status : bool, msg : string}
 
 ## /addReserve
-@params {pid : string,did : string,time : string}  
+@params {pid : string,did : string,date : string, startTime : string, endTime : string}  
 @return {status : bool, msg : string}
 ## /removeReserve
-@params {pid : string,did : string,startTime : string, endTime : string}   
+@params {pid : string,did : string, date:string, startTime : string, endTime : string}   
 @return {status : bool, msg:string}
 ## /searchReserve
-@params {id : string,isDoctor:bool}  
+@params {id : string , isDoctor:bool}  
 @return {reserve : array[object]}
+
+## /searchAvailableTime
+@params {id:string,  date:string}  
+@return {isAvailable : array[boolean]}
 
 ## /searchRecord
 @params {id : string}  
 @return {record : array[object]}  
 
 ## /addRecord
-@params {pid: string, did: string, record:object}  
+@params {date : string , did: string, record:object}  
 @return {status : bool , msg:string}
 
 ## /getHistory
 @params {pid : string}  
-@return {history:array[object]}
+@return {history : array[object]}
 
 ## /updateRecord
-@params {pid : string, updateInfo : object}  
+@params {pid : string, updateInfo : object, date:string }  
 @return {status : bool, msg:string}
