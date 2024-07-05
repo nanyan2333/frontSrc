@@ -1,9 +1,9 @@
 # API  
 ## /login
-@params {id : string, password  : string, isDocter: bool}  
+@params {id : string, password  : string, isDoctor: bool}  
 @return {status : bool, token : string , msg : string , role : string}
 ## /register
-@params {username : string,password : string , position : string, isDocter:bool,...剩下的按数据库命名}  
+@params {id : string,password : string , position : string, isDoctor:bool,...剩下的按数据库命名}  
 @return {status : bool, msg : string}
 
 ## /updateInfo
@@ -22,7 +22,7 @@
 
 ## /searchAvailableTime
 @params {id:string,  date:string}  
-@return {isAvailable : array[boolean]}
+@return {notAvailable : array[boolean]}
 
 ## /searchRecord
 @params {id : string}  

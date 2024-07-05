@@ -1,5 +1,6 @@
 import { createWebHistory, createRouter } from 'vue-router'
-import usePermissionStore from '../store/module/permission';
+import { getToken } from '../utils/auth';
+import { ElMessage } from 'element-plus';
 export const constantRoutes = [
     {
         path: '/',
@@ -43,18 +44,19 @@ const router = createRouter({
     routes: constantRoutes,
 });
 
-// router.beforeEach((to, from, next) => {
-//     const permission = usePermissionStore()
-//     console.log(to.path)
-//     if (to.path === '/login' || to.path === '/register' || from.path === '/' || from.path === '/login') {
-//         next();
-//     } else {
-//         if (permission.hasPermission(to.path)) {
-//             next();
-//         } else {
-//             //取消跳转
-//             alert('权限不足')
-//         }
-//     }
-// });
+router.beforeEach((to, from, next) => {
+    if (to.path === '/login' || to.path === '/register') {
+        next();
+    } else if (from.path === '/login' && getToken() !== "" && getToken() !== null) {
+        next()
+    }
+    else {
+        if (getToken() !== "" && getToken() !== null) {
+            next();
+        } else {
+            ElMessage.error("Cookies过期,请重新登录")
+            router.replace('/login')
+        }
+    }
+});
 export default router;

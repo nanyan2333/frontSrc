@@ -12,7 +12,7 @@
 		</el-divider>
 	</el-row>
 	<el-row>
-		<reserve-list></reserve-list>
+		<reserve-list :isFlush="isFlush"></reserve-list>
 	</el-row>
 	<add-reserve-list
 		:visible="isShow"
@@ -20,7 +20,8 @@
 			(val) => {
 				isShow = val
 			}
-		"></add-reserve-list>
+		"
+		@flush-form="isFlush = !isFlush"></add-reserve-list>
 </template>
 
 <script setup>
@@ -31,6 +32,7 @@ import reserveList from "./reserveList.vue"
 
 const user = useUserStore()
 const isShow = ref(false)
+const isFlush = ref(false)
 const isPatient = ref(user.isPatient() || user.isAdmin())
 
 const handleAddDialog = () => {

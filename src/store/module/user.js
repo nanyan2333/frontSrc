@@ -18,13 +18,13 @@ const useUserStore = defineStore(
                 console.log(this.role);
             },
             isPatient(){
-                return this.role == "patient";
+                return this.role == "Patient";
             },
-            isDocter(){
-                return this.role == "doctor";
+            isDoctor(){
+                return this.role == "Doctor";
             },
             isAdmin(){
-                return this.role == "admin";
+                return this.role == "Admin";
             }
         }
     }

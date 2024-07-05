@@ -19,9 +19,9 @@
 					class="input-item"
 					show-password></el-input>
 			</el-form-item>
-			<el-form-item label="身份" prop="isDocter">
+			<el-form-item label="身份" prop="isDoctor">
 				<el-select
-					v-model="loginForm.isDocter"
+					v-model="loginForm.isDoctor"
 					placeholder="选择身份"
 					class="input-item">
 					<el-option
@@ -43,17 +43,16 @@
 import { ref,watch } from "vue"
 import { useRouter } from "vue-router"
 import useUserStore from "@/store/module/user"
-import usePermissionStore from "@/store/module/permission"
 import { login } from "@/api/setUserState.js"
 import { setToken } from "../utils/auth"
+import { ElMessage } from "element-plus"
 
 const userStore = useUserStore()
-const permissionStore = usePermissionStore()
 const router = useRouter()
 const loginForm = ref({
 	account: "",
 	password: "",
-	isDocter: true,
+	isDoctor: true,
 })
 
 const options = [
@@ -70,21 +69,22 @@ const rules = {
 		{ required: true, message: "请输入密码", trigger: "blur" },
 		{ max: 30, message: "密码最多30位", trigger: "blur" },
 	],
-	isDocter: [{ required: true, message: "请选择身份", trigger: "blur" }],
+	isDoctor: [{ required: true, message: "请选择身份", trigger: "blur" }],
 }
 
 const loginFunc = () => {
 	ruleRef.value.validate((valid) => {
 		if (valid) {
-			login(loginForm.value.account,loginForm.value.password,loginForm.value.isDocter).then((res) => {
+			login(loginForm.value.account,loginForm.value.password,loginForm.value.isDoctor).then((res) => {
 				if (res.data.status) {
 					userStore.id = loginForm.value.account
-					userStore.token = res.data.token
+					userStore.token = loginForm.value.account
 					userStore.role = res.data.role
-					setToken(res.data.token)
+					setToken(loginForm.value.password)
+					ElMessage.success(res.data.msg)
 					router.replace("/index")
 				} else {
-					alert(res.data.msg)
+					ElMessage.error(res.data.msg)
 				}
 			})
 		}

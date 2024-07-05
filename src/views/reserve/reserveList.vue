@@ -1,8 +1,8 @@
 <template>
 	<el-table :data="showData" style="width: 100%" v-if="hasData">
-		<el-table-column label="患者id" prop="pid"></el-table-column>
-		<el-table-column label="医生id" prop="did"></el-table-column>
-		<el-table-column label="预约日期" prop="date"></el-table-column>
+		<el-table-column label="患者id" prop="patientId"></el-table-column>
+		<el-table-column label="医生id" prop="doctorId"></el-table-column>
+		<el-table-column label="预约日期" prop="resDate"></el-table-column>
 		<el-table-column label="预约时段" prop="timeSeg"></el-table-column>
 		<el-table-column align="center">
 			<template #header>
@@ -26,7 +26,9 @@
 			</template>
 		</el-table-column>
 	</el-table>
-	<el-empty v-else description="没有相关数据"></el-empty>
+	<div v-else class="empty-container">
+		<el-empty description="没有相关数据"></el-empty>
+	</div>
 	<el-dialog
 		title="修改预约时间"
 		v-model="isShow"
@@ -38,8 +40,8 @@
 			label-position="left"
 			ref="formRef"
 			:rules="rules">
-			<el-form-item label="选择时段"
-				><el-select v-model="motifiedItem.timeSeg" placeholder="选择时段">
+			<el-form-item label="选择时段">
+				<el-select v-model="motifiedItem.timeSeg" placeholder="选择时段">
 					<el-option
 						v-for="item in options"
 						:key="item.value"
@@ -64,76 +66,63 @@ import {
 	searchAvailableTime,
 } from "../../api/reserve"
 import useUserStore from "@/store/module/user"
+import { ElMessage } from "element-plus";
+const props = defineProps({
+	isFlush: Boolean,
+})
 
 const user = useUserStore()
 const isShow = ref(false)
-const reserveData = ref([
-	{
-		pid: "65553",
-		did: "10001",
-		date: "2022-02-02",
-		timeSeg: "10:00:00-12:00:00",
-	},
-	{
-		pid: "65554",
-		did: "10002",
-		date: "2022-02-02",
-		timeSeg: "13:00:00-15:00:00",
-	},
-	{
-		pid: "65555",
-		did: "10003",
-		date: "2022-02-02",
-		timeSeg: "16:00:00-18:00:00",
-	},
-])
+const reserveData = ref([])
 const formRef = ref(null)
-const options = [
-	{ label: "8:00-9:00", value: "08/00/00-09/00/00", disabled: false },
-	{ label: "9:00-10:00", value: "09/00/00-10/00/00", disabled: false },
-	{ label: "10:00-11:00", value: "10/00/00-11/00/00", disabled: false },
-	{ label: "11:00-12:00", value: "11/00/00-12/00/00", disabled: false },
-	{ label: "14:00-15:00", value: "14/00/00-15/00/00", disabled: false },
-	{ label: "15:00-16:00", value: "15/00/00-16/00/00", disabled: false },
-]
+const options = ref([
+	{ label: "8:00-9:00", value: "08:00:00-09:00:00", disabled: false },
+	{ label: "9:00-10:00", value: "09:00:00-10:00:00", disabled: false },
+	{ label: "10:00-11:00", value: "10:00:00-11:00:00", disabled: false },
+	{ label: "11:00-12:00", value: "11:00:00-12:00:00", disabled: false },
+	{ label: "14:00-15:00", value: "14:00:00-15:00:00", disabled: false },
+	{ label: "15:00-16:00", value: "15:00:00-16:00:00", disabled: false },
+])
 const rules = {
 	timeSeg: [{ required: true, trigger: "blur", message: "请选择时段" }],
 }
 const searchId = ref("")
 const motifyItem = ref({
-	pid: "",
-	did: "",
+	patientId: "",
+	doctorId: "",
+	resDate: "",
 	timeSeg: "",
-	date: "",
 })
 const motifiedItem = ref({
 	timeSeg: "",
 })
-const hasData = computed(() => reserveData.value.length > 0)
+const hasData = computed(
+	() => Array.isArray(reserveData.value) && reserveData.value.length > 0
+)
 
 const showData = computed(() => {
 	return reserveData.value.filter((data) => {
-		if (user.isDocter()) {
-			return data.pid.includes(searchId.value) || !searchId.value
+		if (user.isDoctor()) {
+			return data.patientId.includes(searchId.value) || !searchId.value
 		} else {
-			return data.did.includes(searchId.value) || !searchId.value
+			return data.doctorId.includes(searchId.value) || !searchId.value
 		}
 	})
 })
 
 const getReserveData = () => {
-	searchReserve(user.id, user.isDocter).then((res) => {
-		reserveData.value = res.data.reserve
+	searchReserve(user.id, user.isDoctor()).then((res) => {
+		reserveData.value = res.data.reserves
 	})
 }
 
 const handleMotified = () => {
 	motifiedReserve(motifyItem.value, motifiedItem.value.timeSeg).then((res) => {
-		if (res.status) {
-			alert("修改成功")
+		if (res.data.status) {
 			getReserveData()
+			ElMessage.success(res.data.msg)
 		} else {
-			alert("修改失败")
+			ElMessage.error(res.data.msg)
 		}
 	})
 }
@@ -141,29 +130,46 @@ const handleMotified = () => {
 const edit = (oldVal) => {
 	motifyItem.value = oldVal
 	isShow.value = true
-	searchAvailableTime(motifyItem.value.date).then((res) => {
-		for (i = 0; i < 6; i++) {
-			options[i].disabled = res.data.isAvailable
+	searchAvailableTime(user.id,motifyItem.value.resDate).then((res) => {
+		for (let i = 0; i < options.value.length; i++) {
+			options.value[i].disabled = !res.data[i]
 		}
 	})
 }
 
 const deleteReserve = (oldVal, index) => {
 	removeReserve(oldVal).then((res) => {
-		if (res.status) {
+		if (res.data.status) {
 			reserveData.value.splice(index, 1)
-			alert("删除成功")
+			ElMessage.success(res.data.msg)
 			getReserveData()
 		} else {
-			alert("删除失败")
+			ElMessage.error(res.data.msg)
 		}
 	})
 }
 getReserveData()
+
+watch(
+	() => props.isFlush,
+	(oldVal, newVal) => {
+		if (newVal !== oldVal) {
+			getReserveData()
+		}
+	}
+)
 </script>
+
 <style scoped>
 .searchBar {
 	align-items: center;
 	padding-left: 5px;
+}
+.empty-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 400px; /* Adjust height as needed */
+	width: 100%;
 }
 </style>

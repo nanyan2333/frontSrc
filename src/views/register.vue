@@ -19,9 +19,9 @@
 					class="input-item"
 					show-password></el-input>
 			</el-form-item>
-			<el-form-item label="身份" prop="isDocter">
+			<el-form-item label="身份" prop="isDoctor">
 				<el-select
-					v-model="reigsterForm.isDocter"
+					v-model="reigsterForm.isDoctor"
 					placeholder="选择身份"
 					class="input-item">
 					<el-option
@@ -33,7 +33,7 @@
 			</el-form-item>
 
 			<!-- 根据身份动态显示不同的表单项 -->
-			<template v-if="reigsterForm.isDocter === true">
+			<template v-if="reigsterForm.isDoctor === true">
 				<el-form-item label="医生凭证编号" prop="certificate">
 					<el-input
 						placeholder="请输入医生凭证编号"
@@ -54,7 +54,7 @@
 				</el-form-item>
 			</template>
 
-			<template v-else-if="reigsterForm.isDocter === false">
+			<template v-else-if="reigsterForm.isDoctor === false">
 				<el-form-item label="联系方式" prop="contact">
 					<el-input
 						placeholder="请输入联系方式"
@@ -82,13 +82,12 @@ const userFormRef = ref()
 
 const reigsterForm = ref({
 	password: "",
-	isDocter: false,
+	isDoctor: false,
 	idCard: "",
 	certificate: "",
 	specialty: "",
 	location: "",
 	contact: "",
-	medicalRecords: "",
 })
 
 const options = [
@@ -101,7 +100,7 @@ const rules = {
 		{ required: true, message: "请输入密码", trigger: "blur" },
 		{ max: 30, message: "密码最多30位", trigger: "blur" },
 	],
-	isDocter: [{ required: true, message: "请选择身份", trigger: "blur" }],
+	isDoctor: [{ required: true, message: "请选择身份", trigger: "blur" }],
 	idCard: [
 		{ required: true, message: "请输入身份证ID", trigger: "blur" },
 		{ pattern: /^\d+$/, message: "身份证号必须为数字", trigger: "blur" },

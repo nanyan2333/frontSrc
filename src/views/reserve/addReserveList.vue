@@ -12,13 +12,13 @@
 			<el-form-item label="医生id" prop="did">
 				<el-input v-model="reserveInfo.did"></el-input>
 			</el-form-item>
-			<el-form-item label="预约日期" prop="date">
+			<el-form-item label="预约日期" prop="resDate">
 				<el-date-picker
-					v-model="reserveInfo.date"
+					v-model="reserveInfo.resDate"
 					type="date"
 					placeholder="选择日期"
-					format="YYYY/MM/DD"
-					value-format="YYYY/MM/DD"
+					format="YYYY-MM-DD"
+					value-format="YYYY-MM-DD"
 					style="width: 646.33px" />
 			</el-form-item>
 			<el-form-item label="选择时段" prop="timeSeg">
@@ -40,24 +40,25 @@
 </template>
 
 <script setup>
-import { ref, toRefs } from "vue"
-import { addReserve } from "../../api/reserve"
+import { ref, toRefs, watch } from "vue"
+import { addReserve, searchAvailableTime } from "../../api/reserve"
+import { ElMessage } from "element-plus"
 const formRef = ref(null)
-const options = [
-	{ label: "8:00-9:00", value: "08/00/00-09/00/00", disabled: false },
-	{ label: "9:00-10:00", value: "09/00/00-10/00/00", disabled: false },
-	{ label: "10:00-11:00", value: "10/00/00-11/00/00", disabled: false },
-	{ label: "11:00-12:00", value: "11/00/00-12/00/00", disabled: false },
-	{ label: "14:00-15:00", value: "14/00/00-15/00/00", disabled: false },
-	{ label: "15:00-16:00", value: "15/00/00-16/00/00", disabled: false },
-]
+const options = ref([
+	{ label: "8:00-9:00", value: "08:00:00-09:00:00", disabled: false },
+	{ label: "9:00-10:00", value: "09:00:00-10:00:00", disabled: false },
+	{ label: "10:00-11:00", value: "10:00:00-11:00:00", disabled: false },
+	{ label: "11:00-12:00", value: "11:00:00-12:00:00", disabled: false },
+	{ label: "14:00-15:00", value: "14:00:00-15:00:00", disabled: false },
+	{ label: "15:00-16:00", value: "15:00:00-16:00:00", disabled: false },
+])
 const rules = {
 	pid: [{ required: true, trigger: "blur", message: "输入患者ID" }],
 	did: [{ required: true, trigger: "blur", message: "输入医生ID" }],
-	date: [{ required: true, trigger: "blur", message: "请选择日期" }],
+	resDate: [{ required: true, trigger: "blur", message: "请选择日期" }],
 	timeSeg: [{ required: true, trigger: "blur", message: "请选择时段" }],
 }
-const emit = defineEmits(["controlDialogClose"])
+const emit = defineEmits(["controlDialogClose", "flushForm"])
 const props = defineProps({
 	visible: Boolean,
 })
@@ -65,7 +66,7 @@ const props = defineProps({
 const reserveInfo = ref({
 	pid: "",
 	did: "",
-	date: "",
+	resDate: "",
 	timeSeg: "",
 })
 
@@ -75,15 +76,36 @@ const close = () => {
 	emit("controlDialogClose", false)
 }
 
+watch(
+	() => [reserveInfo.value.resDate, reserveInfo.value.did],
+	([newDate, newDid]) => {
+		if (newDate !== "" && newDid !== "") {
+			searchAvailableTime(newDid, newDate).then((res) => {
+				for (let i = 0; i < 6; i++) {
+					options.value[i].disabled = !res.data[i]
+				}
+			})
+		}
+	}
+)
+
 const addReserveButtonClick = () => {
 	formRef.value.validate((valid) => {
 		if (valid) {
 			addReserve(reserveInfo.value).then((res) => {
 				if (res.status) {
-					alert("预约成功")
+					ElMessage({
+						message: res.data.msg,
+						type: "success",
+					})
 					close()
+					reserveInfo.value.did = ""
+					reserveInfo.value.resDate = ""
+					reserveInfo.value.timeSeg = ""
+					reserveInfo.value.pid = ""
+					emit("flushForm")
 				} else {
-					alert("预约失败")
+					ElMessage.error(res.data.msg)
 				}
 			})
 		}

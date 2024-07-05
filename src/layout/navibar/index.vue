@@ -1,10 +1,13 @@
 <template>
 	<div class="navibar">
-		<a href="https://github.com/nanyan2333/frontSrc">
+		<div>
+			
+		</div>
+		<a href="https://github.com/nanyan2333/frontSrc" target="_blank">
 			<img src="@/assets/github.svg" alt="" />
 		</a>
-		<a href="https://github.com/VicissitudeYW/backEnd">
-			<img src="@/assets/github.svg" alt="" />
+		<a href="https://github.com/VicissitudeYW/backEnd" target="_blank">
+			<img src="@/assets/github_blue.svg" alt="" />
 		</a>
 	</div>
 </template>

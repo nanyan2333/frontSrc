@@ -1,9 +1,9 @@
 <template>
 	<p>{{ data }}</p>
 	<button @click="testit">click</button>
-    <button @click="userStore.setRole('admin')">admin</button>
-    <button @click="userStore.setRole('patient')">patient</button>
-    <button @click="userStore.setRole('docter')">docter</button>
+    <button @click="userStore.setRole('Admin')">admin</button>
+    <button @click="userStore.setRole('Patient')">patient</button>
+    <button @click="userStore.setRole('Doctor')">doctor</button>
 </template>
 <script setup>
 import { ref } from "vue"

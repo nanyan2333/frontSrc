@@ -48,13 +48,13 @@ import { ref } from "vue"
 import useUserStore from "@/store/module/user.js"
 const userStore = useUserStore()
 const isAdmin = ref(userStore.isAdmin())
-const isDocter = ref(userStore.isDocter())
+const isDoctor = ref(userStore.isDoctor())
 const isPatient = ref(userStore.isPatient())
 watch(
 	() => userStore.role,
 	() => {
 		isAdmin.value = userStore.isAdmin()
-		isDocter.value = userStore.isDocter()
+		isDoctor.value = userStore.isDoctor()
 		isPatient.value = userStore.isPatient()
 	}
 )

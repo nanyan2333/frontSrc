@@ -1,7 +1,7 @@
 import request from "@/utils/request.js"
 
 export function addReserve(data) {
-    return request.post('/reserve', data)
+    return request.post('/addReserve', data)
 }
 
 export function searchReserve(_id, _isDocter) {
@@ -9,13 +9,19 @@ export function searchReserve(_id, _isDocter) {
         id: _id,
         isDocter: _isDocter
     }
+    console.log(data)
     return request.post('/searchReserve', data)
 }
-export function motifiedReserve(_old,_newStartTime,_newEndTime) {
+export function motifiedReserve(_old,_timeSeg) {
+//old:{
+// 	patientId: "",
+// 	doctorId: "",
+// 	resDate: "",
+// 	timeSeg: "",
+// }
     const data = {
         old: _old,
-        newStartTime: _newStartTime,
-        newEndTime: _newEndTime
+        timeSeg: _timeSeg
     }
     return request.post('/motifiedReserve', data)
 }
