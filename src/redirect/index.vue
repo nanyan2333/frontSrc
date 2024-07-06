@@ -8,12 +8,10 @@ import { onMounted } from "vue"
 const router = useRouter()
 const userStore = useUserStore()
 onMounted(() => {
-	
-    console.log(userStore.username)
-	if (userStore.id === "") {
+	if (userStore.id === "" || userStore.id === null) {
 		router.replace("/login")
 	} else {
-		console.log(111)
+		router.replace("/index")
 	}
 })
 </script>

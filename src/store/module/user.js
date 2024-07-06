@@ -15,7 +15,6 @@ const useUserStore = defineStore(
             },
             setRole(_role){
                 this.role = _role;
-                console.log(this.role);
             },
             isPatient(){
                 return this.role == "Patient";

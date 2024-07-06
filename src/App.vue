@@ -5,7 +5,7 @@
 				<menu-bar></menu-bar>
 			</el-aside>
 			<el-container>
-				<el-header v-if="isLoginOrReg"> 
+				<el-header v-if="isLoginOrReg" style="padding: 0;"> 
                     <navi-bar></navi-bar>
 				</el-header>
 				<el-main style="padding: 0;">

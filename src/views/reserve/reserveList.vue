@@ -130,7 +130,7 @@ const handleMotified = () => {
 const edit = (oldVal) => {
 	motifyItem.value = oldVal
 	isShow.value = true
-	searchAvailableTime(user.id,motifyItem.value.resDate).then((res) => {
+	searchAvailableTime(motifiedItem.value.doctorId,motifyItem.value.resDate).then((res) => {
 		for (let i = 0; i < options.value.length; i++) {
 			options.value[i].disabled = !res.data[i]
 		}

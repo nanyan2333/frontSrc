@@ -44,7 +44,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue"
+import { ref,watch } from "vue"
 import useUserStore from "@/store/module/user.js"
 const userStore = useUserStore()
 const isAdmin = ref(userStore.isAdmin())

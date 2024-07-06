@@ -6,6 +6,9 @@
 @params {id : string,password : string , position : string, isDoctor:bool,...剩下的按数据库命名}  
 @return {status : bool, msg : string}
 
+## /getInfo
+@params {id : string,role : string}
+@return {按数据库命名}
 ## /updateInfo
 @params {id : string, role: string ,updateInfo : object} 
 @return {status : bool, msg : string}

@@ -6,11 +6,11 @@
 			label-position="left"
 			ref="formRef"
 			:rules="rules">
-			<el-form-item label="患者id" prop="pid">
-				<el-input v-model="reserveInfo.pid"></el-input>
+			<el-form-item label="患者id" prop="patientId">
+				<el-input v-model="reserveInfo.patientId"></el-input>
 			</el-form-item>
-			<el-form-item label="医生id" prop="did">
-				<el-input v-model="reserveInfo.did"></el-input>
+			<el-form-item label="医生id" prop="doctorId">
+				<el-input v-model="reserveInfo.doctorId"></el-input>
 			</el-form-item>
 			<el-form-item label="预约日期" prop="resDate">
 				<el-date-picker
@@ -19,7 +19,8 @@
 					placeholder="选择日期"
 					format="YYYY-MM-DD"
 					value-format="YYYY-MM-DD"
-					style="width: 646.33px" />
+					style="width: 646.33px"
+					:disabled-date="disabledDate" />
 			</el-form-item>
 			<el-form-item label="选择时段" prop="timeSeg">
 				<el-select v-model="reserveInfo.timeSeg" placeholder="选择时段">
@@ -53,8 +54,8 @@ const options = ref([
 	{ label: "15:00-16:00", value: "15:00:00-16:00:00", disabled: false },
 ])
 const rules = {
-	pid: [{ required: true, trigger: "blur", message: "输入患者ID" }],
-	did: [{ required: true, trigger: "blur", message: "输入医生ID" }],
+	patientId: [{ required: true, trigger: "blur", message: "输入患者ID" }],
+	doctorId: [{ required: true, trigger: "blur", message: "输入医生ID" }],
 	resDate: [{ required: true, trigger: "blur", message: "请选择日期" }],
 	timeSeg: [{ required: true, trigger: "blur", message: "请选择时段" }],
 }
@@ -64,8 +65,8 @@ const props = defineProps({
 })
 
 const reserveInfo = ref({
-	pid: "",
-	did: "",
+	patientId: "",
+	doctorId: "",
 	resDate: "",
 	timeSeg: "",
 })
@@ -75,12 +76,14 @@ const { visible } = toRefs(props)
 const close = () => {
 	emit("controlDialogClose", false)
 }
-
+const disabledDate = (time) => {
+	return time.getTime() < Date.now() - 86400000
+}
 watch(
-	() => [reserveInfo.value.resDate, reserveInfo.value.did],
-	([newDate, newDid]) => {
-		if (newDate !== "" && newDid !== "") {
-			searchAvailableTime(newDid, newDate).then((res) => {
+	() => [reserveInfo.value.resDate, reserveInfo.value.doctorId],
+	([newDate, newdoctorId]) => {
+		if (newDate !== "" && newdoctorId !== "") {
+			searchAvailableTime(newdoctorId, newDate).then((res) => {
 				for (let i = 0; i < 6; i++) {
 					options.value[i].disabled = !res.data[i]
 				}
@@ -99,13 +102,14 @@ const addReserveButtonClick = () => {
 						type: "success",
 					})
 					close()
-					reserveInfo.value.did = ""
+					reserveInfo.value.doctorId = ""
 					reserveInfo.value.resDate = ""
 					reserveInfo.value.timeSeg = ""
-					reserveInfo.value.pid = ""
+					reserveInfo.value.patientId = ""
 					emit("flushForm")
 				} else {
 					ElMessage.error(res.data.msg)
+					close()
 				}
 			})
 		}

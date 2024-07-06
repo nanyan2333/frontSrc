@@ -4,10 +4,10 @@ export function addReserve(data) {
     return request.post('/addReserve', data)
 }
 
-export function searchReserve(_id, _isDocter) {
+export function searchReserve(_id, _isDoctor) {
     const data = {
         id: _id,
-        isDocter: _isDocter
+        isDoctor: _isDoctor
     }
     console.log(data)
     return request.post('/searchReserve', data)
