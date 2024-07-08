@@ -42,3 +42,7 @@
 ## /updateRecord
 @params {pid : string, updateInfo : object, date:string }  
 @return {status : bool, msg:string}
+
+## /getChatHistory
+@params {patientId, doctorId}   
+@return {messages : array[...{fromId,fromRole,timeMap:string,content:string}]}

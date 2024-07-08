@@ -9,7 +9,6 @@ export function searchReserve(_id, _isDoctor) {
         id: _id,
         isDoctor: _isDoctor
     }
-    console.log(data)
     return request.post('/searchReserve', data)
 }
 export function motifiedReserve(_old,_timeSeg) {
