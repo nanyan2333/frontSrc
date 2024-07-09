@@ -5,7 +5,7 @@ export const updateInfo = (_id, _role, _updateInfo) => {
         role: _role,
         user_password: _updateInfo.user_password,
         contact: _updateInfo.contact,
-        sepcialty: _updateInfo.sepcialty,
+        specialty: _updateInfo.specialty,
         position: _updateInfo.position,
     }
     return request.post('/updateInfo', data)

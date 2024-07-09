@@ -25,11 +25,10 @@ import { getInfo } from "@/api/userInfo.js"
 import { searchReserve } from "@/api/reserve.js"
 import useUserStore from "@/store/module/user"
 const user = useUserStore()
-const menuItems = ref(["1"])
+const menuItems = ref([])
 const addId = ref("")
 const emits = defineEmits(["selectId"])
 const isSelected = (selectedId) => {
-	console.log("userList: " + selectedId);
 	emits("selectId", selectedId)
 }
 

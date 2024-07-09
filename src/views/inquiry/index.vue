@@ -19,7 +19,6 @@ const user = useUserStore()
 const messages = ref({})
 const selectedId = ref("")
 const socketApi = new SocketApi(user.id, user.role, messages.value)
-socketApi.listenServer()
 
 const handleSelect = (val) => {
 	selectedId.value = val

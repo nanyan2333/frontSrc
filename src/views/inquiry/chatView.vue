@@ -33,15 +33,13 @@ const props = defineProps({
 	selectId: String,
 })
 const emits = defineEmits(["rollMessage"])
-const message = ref("452452")
+const message = ref("")
 const { messages, selectId } = toRefs(props)
 const sendMessage = () => {
 	emits("rollMessage", message.value)
 	message.value = ""
 }
 const judgeSender = (toId) => {
-	console.log("toIdInChat:" + toId)
-	console.log("isSender:" + selectId.value === toId)
 	return selectId.value === toId
 }
 </script>
@@ -50,7 +48,7 @@ const judgeSender = (toId) => {
 .chat-container {
 	display: flex;
 	flex-direction: column;
-	height: 95%;
+	height: 97%;
 	width: 100vw;
 	padding: 10px;
 }
