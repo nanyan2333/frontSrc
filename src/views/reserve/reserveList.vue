@@ -112,7 +112,7 @@ const showData = computed(() => {
 })
 
 const getReserveData = () => {
-	searchReserve(props.userId, user.isDoctor()).then((res) => {
+	searchReserve(props.userId, user.isDoctor() || user.isAdmin()).then((res) => {
 		reserveData.value = res.data.reserves
 	})
 }

@@ -1,6 +1,4 @@
 import request from "@/utils/request.js"
-import useUserStore from "@/store/module/user"
-import { removeToken } from "../utils/auth"
 export function login(_id, _pass, _isDoctor) {
     const data = {
         id: _id,

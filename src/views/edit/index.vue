@@ -75,7 +75,7 @@ const onEditReserve = (val) => {
 const getPageData = () => {
 	getPageDoctorInfo(page.value, eachPageNum.value).then((res) => {
 		doctorData.value = res.data.data
-		maxPage.value = res.data.allPage
+		maxPage.value = res.data.allPage * 9
 	})
 }
 
@@ -89,9 +89,11 @@ getPageData()
 
 <style scoped>
 .info-div {
+	width: 90%;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	padding-left: 50px;
 }
 
 .search-bar {

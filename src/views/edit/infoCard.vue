@@ -39,11 +39,11 @@
 					@click="isEditInfo = true"
 					>修改个人信息</el-button
 				>
-				<el-buttom
+				<el-button
 					v-if="!isEditInfo && !isEditReserve"
 					@click="motifiedReserve">
 					修改预约信息
-				</el-buttom>
+				</el-button>
 				<div v-else>
 					<el-button @click="updateUserInfo">提交</el-button>
 					<el-button @click="cancel">取消</el-button>
@@ -55,6 +55,7 @@
 <script setup>
 import { ref, toRefs } from "vue"
 import { updateInfo } from "../../api/userInfo"
+import { ElMessage } from "element-plus";
 
 const props = defineProps({
 	userInfo: { type: Object, required: true },
@@ -70,13 +71,13 @@ const motifiedItem = ref({
 	position: "",
 })
 const motifiedReserve = () => {
-	emits("editReserve", userInfo.id)
+	emits("editReserve", userInfo.value.id)
 }
 const cancel = () => {
 	isEditInfo.value = false
 }
 const updateUserInfo = () => {
-	updateInfo(userInfo.value.id, "Doctor", motifiedItem.value).then(() => {
+	updateInfo(userInfo.value.id, "Doctor", motifiedItem.value).then((res) => {
 		if (res.data.status) {
 			ElMessage.success(res.data.msg)
 			userInfo.value.position = motifiedItem.value.position
@@ -98,7 +99,7 @@ const updateUserInfo = () => {
 }
 .info-card {
 	width: 100%;
-	max-width: 400px;
+	max-width: 300px;
 	background-color: #ffffff;
 	border-radius: 10px;
 	box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
