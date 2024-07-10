@@ -5,12 +5,12 @@
 				:suffix-icon="Search"
 				v-model="searchId"
 				placeholder="搜索医生ID"></el-input>
-			<el-button @click="searchDoctorById"
-				><el-icon><Search /></el-icon
-			></el-button>
+			<el-button @click="searchDoctorById">
+				<el-icon><Search /></el-icon>
+			</el-button>
 			<el-button @click="resetPage">
-				<el-icon><RefreshRight /></el-icon
-			></el-button>
+				<el-icon><RefreshRight /></el-icon>
+			</el-button>
 		</div>
 		<div class="doctor-cards">
 			<template v-for="(userInfo, index) in doctorData" :key="index">
@@ -37,6 +37,7 @@
 		</div>
 	</div>
 </template>
+
 <script setup>
 import { ref } from "vue"
 import reserveList from "../reserve/reserveList.vue"
@@ -44,6 +45,7 @@ import infoCard from "./infoCard.vue"
 import { Search } from "@element-plus/icons-vue"
 import { getInfo } from "../../api/userInfo"
 import { getPageDoctorInfo } from "../../api/admin"
+
 const page = ref(1)
 const eachPageNum = ref(9)
 const showReserveList = ref(false)
@@ -51,27 +53,32 @@ const searchId = ref("")
 const doctorData = ref([])
 const reserveListId = ref("")
 const maxPage = ref(0)
+
 const searchDoctorById = () => {
 	getInfo(searchId.value, true).then((res) => {
 		doctorData.value = []
 		doctorData.value.push(res.data)
 	})
 }
+
 const resetPage = () => {
 	searchId.value = ""
 	page.value = 1
 	getPageData()
 }
+
 const onEditReserve = (val) => {
 	reserveListId.value = val
 	showReserveList.value = true
 }
+
 const getPageData = () => {
 	getPageDoctorInfo(page.value, eachPageNum.value).then((res) => {
 		doctorData.value = res.data.data
 		maxPage.value = res.data.allPage
 	})
 }
+
 const handleCurrentChange = (newPage) => {
 	page.value = newPage
 	getPageData()
@@ -79,3 +86,36 @@ const handleCurrentChange = (newPage) => {
 
 getPageData()
 </script>
+
+<style scoped>
+.info-div {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.search-bar {
+	margin-bottom: 20px;
+	display: flex;
+	gap: 10px;
+}
+
+.doctor-cards {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 20px;
+	width: 100%;
+}
+
+.pagination {
+	margin-top: 20px;
+}
+
+.reserve-view {
+	width: 100%;
+}
+
+.button-return {
+	margin-bottom: 20px;
+}
+</style>
