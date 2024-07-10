@@ -1,7 +1,10 @@
 <template>
 	<el-row>
 		<div class="addButtonGroup">
-			<el-button @click="handleAddDialog" v-if="isPatient" style="padding-right: 30px;">
+			<el-button
+				@click="handleAddDialog"
+				v-if="isPatient"
+				style="padding-right: 30px">
 				<el-icon><Plus /></el-icon>新增预约
 			</el-button>
 		</div>
@@ -12,7 +15,7 @@
 		</el-divider>
 	</el-row>
 	<el-row>
-		<reserve-list :isFlush="isFlush"></reserve-list>
+		<reserve-list :isFlush="isFlush" :userId="userId"></reserve-list>
 	</el-row>
 	<add-reserve-list
 		:visible="isShow"
@@ -34,6 +37,7 @@ const user = useUserStore()
 const isShow = ref(false)
 const isFlush = ref(false)
 const isPatient = ref(user.isPatient() || user.isAdmin())
+const userId = ref(user.id)
 
 const handleAddDialog = () => {
 	isShow.value = true

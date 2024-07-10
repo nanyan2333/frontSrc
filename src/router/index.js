@@ -37,6 +37,11 @@ export const constantRoutes = [
         name: 'inquiry',
         component: () => import('@/views/inquiry/index.vue')
     },
+    {
+        path: '/edit',
+        name: 'edit',
+        component: () => import('@/views/edit/index.vue')
+    }
 
 ]
 const router = createRouter({

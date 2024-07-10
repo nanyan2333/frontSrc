@@ -66,9 +66,10 @@ import {
 	searchAvailableTime,
 } from "../../api/reserve"
 import useUserStore from "@/store/module/user"
-import { ElMessage } from "element-plus";
+import { ElMessage } from "element-plus"
 const props = defineProps({
 	isFlush: Boolean,
+	userId: { type: String, required: true },
 })
 
 const user = useUserStore()
@@ -111,7 +112,7 @@ const showData = computed(() => {
 })
 
 const getReserveData = () => {
-	searchReserve(user.id, user.isDoctor()).then((res) => {
+	searchReserve(props.userId, user.isDoctor()).then((res) => {
 		reserveData.value = res.data.reserves
 	})
 }
@@ -130,7 +131,10 @@ const handleMotified = () => {
 const edit = (oldVal) => {
 	motifyItem.value = oldVal
 	isShow.value = true
-	searchAvailableTime(motifiedItem.value.doctorId,motifyItem.value.resDate).then((res) => {
+	searchAvailableTime(
+		motifiedItem.value.doctorId,
+		motifyItem.value.resDate
+	).then((res) => {
 		for (let i = 0; i < options.value.length; i++) {
 			options.value[i].disabled = !res.data[i]
 		}

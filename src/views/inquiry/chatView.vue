@@ -1,13 +1,14 @@
 <template>
 	<div class="chat-container">
 		<div class="messages">
-			<el-scrollbar height="600px">
-				<message-bubble
-					v-for="(obj, index) in messages"
-					:key="index"
-					:message="obj.message"
-					:is-sent-by-me="judgeSender(obj.toId)">
-				</message-bubble>
+			<el-scrollbar height="600px" ref="messagesContainer">
+				<div ref="innerRef" style="padding: 10px">
+					<message-bubble
+						v-for="(obj, index) in messages"
+						:key="index"
+						:message="obj.message"
+						:is-sent-by-me="judgeSender(obj.toId)"></message-bubble>
+				</div>
 			</el-scrollbar>
 		</div>
 		<div class="input-container">
@@ -26,8 +27,9 @@
 </template>
 
 <script setup>
-import { ref, toRefs } from "vue"
+import { ref, toRefs, watch, nextTick } from "vue"
 import MessageBubble from "./message.vue"
+
 const props = defineProps({
 	messages: Object,
 	selectId: String,
@@ -35,13 +37,32 @@ const props = defineProps({
 const emits = defineEmits(["rollMessage"])
 const message = ref("")
 const { messages, selectId } = toRefs(props)
+const messagesContainer = ref(null)
+const innerRef = ref(null)
+
 const sendMessage = () => {
 	emits("rollMessage", message.value)
 	message.value = ""
+	setScrollToBottom() 
 }
+
 const judgeSender = (toId) => {
 	return selectId.value === toId
 }
+
+async function setScrollToBottom() {
+	await nextTick()
+	const max = innerRef.value.scrollHeight
+	messagesContainer.value.setScrollTop(max)
+}
+
+watch(
+	() => messages.value,
+	() => {
+		setScrollToBottom()
+	},
+	{ deep: true }
+)
 </script>
 
 <style>

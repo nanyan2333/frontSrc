@@ -46,3 +46,12 @@
 ## /getChatHistory
 @params {patientId, doctorId}   
 @return {messages : array[...{fromId,fromRole,timeMap:string,content:string}]}
+
+## /getPageDoctorInfo
+@params {page:int,eachPageNum:int}
+@return {data:[...object],allPage:int}
+
+
+## /getSelectedDoctorId
+@params {position,specialty}
+@return [id:string]

@@ -12,18 +12,31 @@ class SocketApi {
     connect() {
         this.socket = new WebSocket(this.url);
         this.socket.onclose = () => {
-            console.log('WebSocket closed, attempting to reconnect...'); 
+            console.log('WebSocket closed, attempting to reconnect...');
         };
         this.socket.onopen = () => {
             console.log('WebSocket connected:' + this.url);
         }
-        this.socket.onmessage = (msg) => {
-            let res = JSON.parse(msg.data);
-            if (res.fromId) {
-                if (!this.messages[res.fromId]) {
-                    this.messages[res.fromId] = [];
+        this.socket.onmessage = (event) => {
+           
+            // event.data 是接收到的消息字符串
+            let data = event.data;
+            try {
+                // 将字符串解析为 JSON 对象
+                let res = JSON.parse(data);
+                res.toId = this.id
+                res.toRole = this.role
+                res.chatTime = getCurrentFormattedTime();
+                console.log(res);
+                if (res.fromId) {
+                    console.log("has data:" + this.messages[res.fromId]);
+                    if (!this.messages[res.fromId]) {
+                        this.messages[res.fromId] = [];
+                    }
+                    this.messages[res.fromId].push(res);
                 }
-                this.messages[res.fromId].push(res.message);
+            } catch (error) {
+                console.error('Error parsing message:', error);
             }
         };
     }
@@ -38,8 +51,8 @@ class SocketApi {
             this.socket.send(JSON.stringify(data));
         } else {
             console.error('WebSocket is not open. readyState: ' + this.socket.readyState);
-            setTimeout(() => this.socket.send(JSON.stringify(data)), 1000); 
-            
+            setTimeout(() => this.socket.send(JSON.stringify(data)), 1000);
+
         }
     }
 
