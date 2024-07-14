@@ -1,217 +1,181 @@
 <template>
-	<el-form
-		:model="medicalInfo"
-		label-width="80px"
-		label-position="left"
-		ref="formRef"
-		:rules="rules">
-		<template v-if="isDoctor">
-			<div class="form-container">
-				<div class="form-item">
-					<el-input
-						v-model="medicalInfo.pid"
-						placeholder="请输入患者的身份ID"
-						clearable
-						style="width: 200px">
-					</el-input>
-				</div>
-				<div class="form-item">
-					<el-date-picker
-						v-model="medicalInfo.time"
-						type="datetime"
-						placeholder="选择日期时间">
-					</el-date-picker>
-				</div>
-			</div>
-			<br /><br />
+  <el-form :model="medicalInfo" label-width="80px" ref="formRef" :rules="rules">
+    <template v-if="isDoctor">
+      <div class="form-container">
+        <div class="form-item">
+          <el-input v-model="medicalInfo.patientId" placeholder="请输入患者的身份ID" clearable style="width: 200px" :rows="2">
+          </el-input>
+        </div>
+      </div>
+      <br />
 
-			<el-collapse style="max-width: 600px; margin: 0 auto">
-				<el-collapse-item
-					title="新增医疗记录"
-					name="1"
-					style="text-align: center">
-					<el-input
-						type="textarea"
-						placeholder="请填写患者的医疗记录"
-						v-model="medicalInfo.updateInfo"
-						:rows="3"
-						class="input-item"
-						prefix-icon="el-icon-search"></el-input>
-					<div style="margin-top: 20px"></div>
-					<div class="button-container">
-						<el-button
-							type="primary"
-							round
-							class="button"
-							@click="addRecord(medicalInfo)"
-							>提交记录</el-button
-						>
-					</div>
-				</el-collapse-item>
+      <div class="table-container" style="display: flex; flex-direction: column; align-items: center;">
+        <el-table :data="tableData" style="width: 100%" height="350px" overflow-y: auto :default-sort="{prop: 'mrTime', order: 'descending'}">
+          <el-table-column prop="mrTime" label="就诊时间"></el-table-column>
+          <el-table-column prop="content" label="医疗记录"></el-table-column>
+        </el-table>
+      </div>
+      <br />
 
-				<el-collapse-item
-					title="查询历史医疗记录"
-					@change="searchRecord(medicalInfo)"
-					name="2">
-					<el-table :data="tableData" style="width: 100%" height="250">
-						<el-table-column label="日期" width="180">
-							<template slot-scope="scope">
-								<i class="el-icon-time"></i>
-								<span style="margin-left: 10px">{{ scope.row.time }}</span>
-							</template>
-						</el-table-column>
-						<el-table-column
-							prop="updateInfo"
-							label="医疗信息"
-							width="180"></el-table-column>
-						<el-table-column fixed="right" label="操作" width="100">
-							<template slot-scope="scope">
-								<el-button @click="editRecord(scope.row)" size="small"
-									>编辑</el-button
-								>
-							</template>
-						</el-table-column>
-					</el-table>
-				</el-collapse-item>
-			</el-collapse>
+      <div class="button-container">
+        <el-button type="primary" @click="dialogVisible = true">新增医疗记录</el-button>
+        <el-dialog v-model="dialogVisible" title="新增医疗记录">
+          <el-input v-model="medicalInfo.content" :rows="7" type="textarea" placeholder="请输入医疗记录内容"></el-input>
+          <br /><br />
+          <div slot="footer" class="dialog-footer button-container">
+            <el-button @click="cancelDialog">取消</el-button>
+            <el-button type="primary" @click="add">确认</el-button>
+          </div>
+        </el-dialog>
 
-			<el-dialog title="编辑医疗信息" :visible.sync="dialogVisible">
-				<el-form :model="medicalInfo" label-width="80px">
-					<el-form-item label="更新信息">
-						<el-input v-model="medicalInfo.updateInfo"></el-input>
-					</el-form-item>
-				</el-form>
-				<div slot="footer" class="dialog-footer">
-					<el-button @click="dialogVisible = false">取 消</el-button>
-					<el-button type="primary" @click="saveUpdate">确 定</el-button>
-				</div>
-			</el-dialog>
-		</template>
+        <el-button type="primary" @click="search(medicalInfo)">查询医疗记录</el-button>
+      </div>
 
-		<template v-else>
-			<el-form-item label="身份ID" prop="pid">
-				<el-input
-					v-model="medicalInfo.pid"
-					placeholder="请输入身份ID"></el-input>
-			</el-form-item>
-			<div class="button-container">
-				<el-button type="primary" round class="button" @click="fetchData"
-					>查询医疗记录</el-button
-				>
-			</div>
-		</template>
-	</el-form>
+    </template>
+
+    <template v-else>
+      <div class="table-container" style="display: flex; flex-direction: column; align-items: center;">
+        <el-table :data="tableData" style="width: 100%" height="350px" overflow-y: auto :default-sort="{prop: 'mrTime', order: 'descending'}">
+          <el-table-column prop="mrTime" label="就诊时间"></el-table-column>
+          <el-table-column prop="content" label="医疗记录"></el-table-column>
+        </el-table>
+      </div>
+      <br /><br />
+      <div class="button-container">
+        <el-button type="primary" round class="button" @click="search(medicalInfo)">查询医疗记录</el-button>
+      </div>
+    </template>
+  </el-form>
 </template>
 
 <script setup>
-import { ref, watch, computed } from "vue"
-import useUserStore from "@/store/module/user"
-import { addRecord, searchRecord, updateRecord } from "../../api/history"
-import { ElMessage } from "element-plus"
-import { addReserve } from "../../api/reserve"
-
-const dialogVisible = ref(false)
-let currentRow = null
-const editRecord = (row) => {
-	currentRow = row
-	medicalInfo.value.updateInfo = row.updateInfo
-	dialogVisible.value = true
-}
-const saveUpdate = () => {
-	if (!medicalInfo.value.updateInfo.trim()) {
-		ElMessage({
-			message: "更新信息不能为空",
-			type: "warning",
-		})
-		return
-	}
-	currentRow.updateInfo = medicalInfo.value.updateInfo
-	dialogVisible.value = false
-	updateRecord(
-		medicalInfo.value.pid,
-		medicalInfo.value.time,
-		medicalInfo.value.updateInfo
-	)
-}
-
-const userStore = useUserStore()
-
-const formRef = ref(null)
-const isAdmin = ref(userStore.isAdmin())
-const isDoctor = ref(userStore.isDoctor())
-const isPatient = ref(userStore.isPatient())
-watch(
-	() => userStore.role,
-	() => {
-		isAdmin.value = userStore.isAdmin()
-		isDoctor.value = userStore.isDoctor()
-		isPatient.value = userStore.isPatient()
-	}
-)
-
-const tableData = ref([])
+import { ref, watch } from "vue";
+import { addRecord, searchRecord } from "../../api/history";
+import { ElMessage } from "element-plus";
+import useUserStore from "@/store/module/user";
 
 const medicalInfo = ref({
-	pid: "",
-	updateInfo: "",
-	time: "",
-})
+  patientId: "",
+  content: "",
+  mrTime: "",
+});
 
-const medicalData = ref([])
-const hasData = computed(
-	() => Array.isArray(medicalData.value) && medicalData.value.length > 0
-)
+const dialogVisible = ref(false)
+const cancelDialog = () => {
+  medicalInfo.value.content = '';
+  dialogVisible.value = false;
+};
 
+const user = useUserStore();
+medicalInfo.value.patientId = ref(user.id)
+const isAdmin = ref(user.isAdmin());
+const isDoctor = ref(user.isDoctor());
+const isPatient = ref(user.isPatient());
+watch(
+  () => user.role,
+  () => {
+    isAdmin.value = user.isAdmin();
+    isDoctor.value = user.isDoctor();
+    isPatient.value = user.isPatient();
+  }
+);
+
+const tableData = ref([]);
+const search = (val) => {
+  const jsonData = JSON.stringify({ id: val.patientId });
+  searchRecord(jsonData).then((res) => {
+    if (res.data && res.data.records && Array.isArray(res.data.records)) {
+      tableData.value = res.data.records;
+    } else {
+      ElMessage.error("返回数据格式不正确");
+    }
+  }).catch((error) => {
+    console.error('搜索记录失败:', error)
+    ElMessage.error("无该患者的医疗记录")
+  });
+};
+
+const formatDateTime = (date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+};
+
+const formRef = ref(null);
 const add = () => {
-	formRef.value.validate((valid) => {
-		if (valid) {
-			addRecord(medicalInfo.value.pid).then((res) => {
-				if (res.status) {
-					ElMessage({
-						message: res.data.msg,
-						type: "success",
-					})
-					close()
-					reserveInfo.value.pid = ""
-					reserveInfo.value.updateInfo = ""
-					reserveInfo.value.time = ""
-					emit("flushForm")
-				} else {
-					ElMessage.error(res.data.msg)
-					close()
-				}
-			})
-		}
-	})
-}
+  medicalInfo.value.mrTime = formatDateTime(new Date());
+  formRef.value.validate((valid) => {
+    if (valid) {
+      addRecord(medicalInfo.value.patientId, medicalInfo.value.mrTime, medicalInfo.value.content).then((res) => {
+        dialogVisible.value = false
+        if (res.status) {
+          ElMessage({
+            message: res.data.msg,
+            type: "success",
+          })
+          medicalInfo.value.content = ""
+        } else {
+          ElMessage({
+            message: res.data.msg,
+            type: "false",
+          })
+        }
+      });
+    }
+  });
+};
 
 const rules = {
-	pid: [
-		{ required: true, message: "请输入病人ID", trigger: "blur" },
-		{ pattern: /^\d+$/, message: "病人ID必须为数字", trigger: "blur" },
-	],
-	updateInfo: [{ required: true, message: "请填写医疗记录", trigger: "blur" }],
-}
+  patientId: [
+    { required: true, message: "请输入病人ID", trigger: "blur" },
+    { pattern: /^\d+$/, message: "病人ID必须为数字", trigger: "blur" },
+  ],
+  content: [
+    { required: true, message: "请填写医疗记录", trigger: "blur" },
+
+  ],
+};
+
 </script>
 
 <style>
 body,
 html {
-	margin: 0;
-	padding: 0;
-	height: 100%;
-	overflow: auto;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: auto;
 }
+
 .form-container {
-	display: flex;
-	justify-content: space-between;
-	align-items: flex-start;
-	margin-top: 100px;
-	padding: 0 200px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-top: 100px;
+  padding: 0 300px;
 }
+
 .form-item {
-	margin-left: auto;
-	margin-right: auto;
-	max-width: 100px;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 200px;
+}
+
+.button-container {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 60px;
+}
+
+.table-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 </style>
