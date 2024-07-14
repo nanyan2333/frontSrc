@@ -62,7 +62,7 @@ import { ref, computed } from "vue"
 import {
 	searchReserve,
 	removeReserve,
-	motifiedReserve,
+	modifiedReserve,
 	searchAvailableTime,
 } from "../../api/reserve"
 import useUserStore from "@/store/module/user"
@@ -118,7 +118,7 @@ const getReserveData = () => {
 }
 
 const handleMotified = () => {
-	motifiedReserve(motifyItem.value, motifiedItem.value.timeSeg).then((res) => {
+	modifiedReserve(motifyItem.value, motifiedItem.value.timeSeg).then((res) => {
 		if (res.data.status) {
 			getReserveData()
 			ElMessage.success(res.data.msg)

@@ -23,7 +23,7 @@
 				<el-select
 					v-model="reserveInfo.doctorId"
 					filterable
-					placeholder="选择患者id">
+					placeholder="选择医生id">
 					<el-option
 						v-for="item in doctorIdOptions"
 						:key="item.value"

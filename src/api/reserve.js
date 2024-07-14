@@ -11,7 +11,7 @@ export function searchReserve(_id, _isDoctor) {
     }
     return request.post('/searchReserve', data)
 }
-export function motifiedReserve(_old, _timeSeg) {
+export function modifiedReserve(_old, _timeSeg) {
     //old:{
     // 	patientId: "",
     // 	doctorId: "",
@@ -22,7 +22,7 @@ export function motifiedReserve(_old, _timeSeg) {
         old: _old,
         timeSeg: _timeSeg
     }
-    return request.post('/motifiedReserve', data)
+    return request.post('/modifiedReserve', data)
 }
 
 export function removeReserve(data) {
