@@ -1,10 +1,7 @@
 <template>
 	<el-row>
 		<div class="addButtonGroup">
-			<el-button
-				@click="handleAddDialog"
-				v-if="isPatient"
-				style="padding-right: 30px">
+			<el-button @click="handleAddDialog" v-if="isPatient">
 				<el-icon><Plus /></el-icon>新增预约
 			</el-button>
 		</div>
@@ -49,5 +46,6 @@ const handleAddDialog = () => {
 	width: 100%;
 	display: flex;
 	justify-content: flex-end;
+	padding-right: 30px;
 }
 </style>

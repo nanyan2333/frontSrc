@@ -6,11 +6,30 @@
 			label-position="left"
 			ref="formRef"
 			:rules="rules">
+			<el-form-item label="医生属地">
+				<el-input
+					placeholder="输入属地"
+					v-model="queryParams.position"></el-input>
+			</el-form-item>
+			<el-form-item label="医生专长">
+				<el-input
+					placeholder="输入专长"
+					v-model="queryParams.specialty"></el-input>
+			</el-form-item>
 			<el-form-item label="患者id" prop="patientId">
 				<el-input v-model="reserveInfo.patientId"></el-input>
 			</el-form-item>
 			<el-form-item label="医生id" prop="doctorId">
-				<el-input v-model="reserveInfo.doctorId"></el-input>
+				<el-select
+					v-model="reserveInfo.doctorId"
+					filterable
+					placeholder="选择患者id">
+					<el-option
+						v-for="item in doctorIdOptions"
+						:key="item.value"
+						:label="item.label"
+						:value="item.value" />
+				</el-select>
 			</el-form-item>
 			<el-form-item label="预约日期" prop="resDate">
 				<el-date-picker
@@ -42,9 +61,18 @@
 
 <script setup>
 import { ref, toRefs, watch } from "vue"
-import { addReserve, searchAvailableTime } from "../../api/reserve"
+import {
+	addReserve,
+	searchAvailableTime,
+	getSelectedDoctorId,
+} from "../../api/reserve"
 import { ElMessage } from "element-plus"
+
 const formRef = ref(null)
+const queryParams = ref({
+	position: "",
+	specialty: "",
+})
 const options = ref([
 	{ label: "8:00-9:00", value: "08:00:00-09:00:00", disabled: false },
 	{ label: "9:00-10:00", value: "09:00:00-10:00:00", disabled: false },
@@ -53,6 +81,7 @@ const options = ref([
 	{ label: "14:00-15:00", value: "14:00:00-15:00:00", disabled: false },
 	{ label: "15:00-16:00", value: "15:00:00-16:00:00", disabled: false },
 ])
+const doctorIdOptions = ref([])
 const rules = {
 	patientId: [{ required: true, trigger: "blur", message: "输入患者ID" }],
 	doctorId: [{ required: true, trigger: "blur", message: "输入医生ID" }],
@@ -79,6 +108,17 @@ const close = () => {
 const disabledDate = (time) => {
 	return time.getTime() < Date.now() - 86400000
 }
+const selectDoctorId = (newParms) => {
+	getSelectedDoctorId(newParms).then((res) => {
+		doctorIdOptions.value = []
+		res.data.forEach((element) => {
+			doctorIdOptions.value.push({
+				label: element,
+				value: element,
+			})
+		})
+	})
+}
 watch(
 	() => [reserveInfo.value.resDate, reserveInfo.value.doctorId],
 	([newDate, newdoctorId]) => {
@@ -91,7 +131,13 @@ watch(
 		}
 	}
 )
-
+watch(
+	() => queryParams.value,
+	(newVal) => {
+		selectDoctorId(newVal)
+	},
+	{ immediate: true, deep: true }
+)
 const addReserveButtonClick = () => {
 	formRef.value.validate((valid) => {
 		if (valid) {
@@ -115,6 +161,7 @@ const addReserveButtonClick = () => {
 		}
 	})
 }
+selectDoctorId(queryParams.value)
 </script>
 
 <style scoped>

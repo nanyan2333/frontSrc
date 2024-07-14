@@ -33,14 +33,16 @@
 			</el-form-item>
 			<div class="button-container">
 				<el-button @click="loginFunc" class="button">登录</el-button>
-				<el-button @click="goToRegister" class="button">注册</el-button>
+				<el-button @click="goToRegister" class="button register-button"
+					>注册</el-button
+				>
 			</div>
 		</el-form>
 	</div>
 </template>
 
 <script setup>
-import { ref,watch } from "vue"
+import { ref, watch } from "vue"
 import { useRouter } from "vue-router"
 import useUserStore from "@/store/module/user"
 import { login } from "@/api/setUserState.js"
@@ -75,7 +77,11 @@ const rules = {
 const loginFunc = () => {
 	ruleRef.value.validate((valid) => {
 		if (valid) {
-			login(loginForm.value.account,loginForm.value.password,loginForm.value.isDoctor).then((res) => {
+			login(
+				loginForm.value.account,
+				loginForm.value.password,
+				loginForm.value.isDoctor
+			).then((res) => {
 				if (res.data.status) {
 					userStore.id = loginForm.value.account
 					userStore.token = loginForm.value.account
@@ -104,8 +110,9 @@ html {
 	height: 100%;
 	overflow: auto;
 }
+
 .page-container {
-	background-color: #e0f2f1;
+	background-color: #f5f7fa;
 	height: 100%;
 	display: flex;
 	justify-content: center;
@@ -115,18 +122,19 @@ html {
 }
 
 .login-container {
-	background-color: #fff;
+	background-color: #ffffff;
 	padding: 40px;
-	border-radius: 10px;
+	border-radius: 12px;
 	width: 400px;
-	box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 	text-align: center;
 }
 
 .title {
 	margin-bottom: 30px;
 	font-size: 2em;
-	color: #333;
+	color: #333333;
+	font-weight: bold;
 }
 
 .input-item {
@@ -136,19 +144,22 @@ html {
 
 .button-container {
 	display: flex;
-	justify-content: center;
+	justify-content: space-between;
 }
 
 .button {
 	margin-top: 10px;
 	width: 48%;
 	font-size: 1.1em;
-	background-color: #42b983;
-	color: #fff;
-	margin: 0 5px;
+	background-color: #409eff;
+	color: #ffffff;
+	border: none;
+	border-radius: 5px;
+	padding: 10px;
+	transition: background-color 0.3s ease;
 }
 
-.button:hover {
-	background-color: #339970;
+.register-button {
+	background-color: #67c23a;
 }
 </style>
