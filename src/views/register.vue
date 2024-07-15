@@ -4,7 +4,8 @@
 			:model="reigsterForm"
 			class="reigster-container"
 			:rules="rules"
-			ref="userFormRef">
+			ref="userFormRef"
+			label-width="auto">
 			<h3 class="title">说的道理管理系统</h3>
 			<el-form-item label="身份证号" prop="idCard">
 				<el-input
@@ -65,6 +66,7 @@
 
 			<div class="button-container">
 				<el-button class="button" @click="validateAndRegister">注册</el-button>
+				<el-text class="back-login" tag="ins" @click="backLogin">已有账号?返回登陆</el-text>
 			</div>
 		</el-form>
 	</div>
@@ -75,6 +77,7 @@ import { ref } from "vue"
 import { useRouter } from "vue-router"
 import useUserStore from "@/store/module/user"
 import { register } from "@/api/setUserState.js"
+import { ElMessage } from "element-plus";
 
 const userStore = useUserStore()
 const router = useRouter()
@@ -135,18 +138,22 @@ const validateAndRegister = () => {
 		if (valid) {
 			register(reigsterForm.value).then((res) => {
 				if (res.data.status) {
-					alert(res.data.msg)
+					ElMessage.success(res.data.msg)
 					router.push("/login")
 				} else {
-					alert(res.data.msg)
+					ElMessage.error(res.data.msg)
 				}
 			})
 		}
 	})
 }
+
+const backLogin = () => {
+    router.replace("/login")
+}
 </script>
 
-<style>
+<style scoped>
 body,
 html {
 	margin: 0;
@@ -186,19 +193,27 @@ html {
 
 .button-container {
 	display: flex;
-	justify-content: center;
+	flex-direction: column;
+	align-items: center;
 }
 
 .button {
 	margin-top: 10px;
-	width: 48%;
+	width: 100%;
 	font-size: 1.1em;
 	background-color: #42b983;
 	color: #fff;
-	margin: 0 5px;
 }
 
 .button:hover {
 	background-color: #339970;
+}
+
+.back-login {
+	margin-top: 10px;
+	width: 100%;
+	text-align: right;
+	cursor: pointer;
+	color: #42b983;
 }
 </style>

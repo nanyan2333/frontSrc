@@ -16,10 +16,10 @@
 				<el-text size="large" style="color: #ffffff;">首页</el-text>
 			</template>
 		</el-menu-item>
-		<el-menu-item index="/history" v-if="isPatient || isAdmin">
+		<el-menu-item index="/history">
 			<template #title>
 				<el-icon><Tickets /></el-icon>
-				<el-text size="large" style="color: #ffffff;">历史记录</el-text>
+				<el-text size="large" style="color: #ffffff;">医疗记录</el-text>
 			</template>
 		</el-menu-item>
 		<el-menu-item index="/reserve">

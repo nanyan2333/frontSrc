@@ -1,181 +1,104 @@
 <template>
-  <el-form :model="medicalInfo" label-width="80px" ref="formRef" :rules="rules">
-    <template v-if="isDoctor">
-      <div class="form-container">
-        <div class="form-item">
-          <el-input v-model="medicalInfo.patientId" placeholder="请输入患者的身份ID" clearable style="width: 200px" :rows="2">
-          </el-input>
-        </div>
-      </div>
-      <br />
-
-      <div class="table-container" style="display: flex; flex-direction: column; align-items: center;">
-        <el-table :data="tableData" style="width: 100%" height="350px" overflow-y: auto :default-sort="{prop: 'mrTime', order: 'descending'}">
-          <el-table-column prop="mrTime" label="就诊时间"></el-table-column>
-          <el-table-column prop="content" label="医疗记录"></el-table-column>
-        </el-table>
-      </div>
-      <br />
-
-      <div class="button-container">
-        <el-button type="primary" @click="dialogVisible = true">新增医疗记录</el-button>
-        <el-dialog v-model="dialogVisible" title="新增医疗记录">
-          <el-input v-model="medicalInfo.content" :rows="7" type="textarea" placeholder="请输入医疗记录内容"></el-input>
-          <br /><br />
-          <div slot="footer" class="dialog-footer button-container">
-            <el-button @click="cancelDialog">取消</el-button>
-            <el-button type="primary" @click="add">确认</el-button>
-          </div>
-        </el-dialog>
-
-        <el-button type="primary" @click="search(medicalInfo)">查询医疗记录</el-button>
-      </div>
-
-    </template>
-
-    <template v-else>
-      <div class="table-container" style="display: flex; flex-direction: column; align-items: center;">
-        <el-table :data="tableData" style="width: 100%" height="350px" overflow-y: auto :default-sort="{prop: 'mrTime', order: 'descending'}">
-          <el-table-column prop="mrTime" label="就诊时间"></el-table-column>
-          <el-table-column prop="content" label="医疗记录"></el-table-column>
-        </el-table>
-      </div>
-      <br /><br />
-      <div class="button-container">
-        <el-button type="primary" round class="button" @click="search(medicalInfo)">查询医疗记录</el-button>
-      </div>
-    </template>
-  </el-form>
+	<div class="main">
+		<div class="search-bar" v-if="isDoctor">
+			<div class="search-left">
+				<el-button @click="showAddRecord = true"
+					><el-icon><Plus /></el-icon>新增记录</el-button
+				>
+			</div>
+			<div class="search-right">
+				<el-input
+					placeholder="请输入查询患者的ID"
+					v-model="searchInfo"></el-input>
+				<el-button @click="getRecordsData">
+					<el-icon><Search /></el-icon> 查询
+				</el-button>
+			</div>
+		</div>
+		<el-divider></el-divider>
+		<div class="text-area" v-if="!showAddRecord">
+			<show-record :options="options" :records="records"></show-record>
+		</div>
+		<div v-if="showAddRecord" class="text-area">
+			<add-record
+				@added="added"
+				@back="(val) => (showAddRecord = val)"></add-record>
+		</div>
+	</div>
 </template>
 
 <script setup>
-import { ref, watch } from "vue";
-import { addRecord, searchRecord } from "../../api/history";
-import { ElMessage } from "element-plus";
-import useUserStore from "@/store/module/user";
+import { ref, watch } from "vue"
+import { searchRecord } from "../../api/history"
+import useUserStore from "@/store/module/user"
+import showRecord from "./showRecord.vue"
+import addRecord from "./addRecord.vue"
+import { ElMessage } from "element-plus"
 
 const medicalInfo = ref({
-  patientId: "",
-  content: "",
-  mrTime: "",
-});
+	patientId: "",
+	content: "",
+	mrTime: "",
+})
+const searchInfo = ref("")
+const user = useUserStore()
+const options = ref([])
+const records = ref([])
+const isDoctor = user.isDoctor()
+const showAddRecord = ref(false)
 
-const dialogVisible = ref(false)
-const cancelDialog = () => {
-  medicalInfo.value.content = '';
-  dialogVisible.value = false;
-};
+const getRecordsData = () => {
+	searchRecord(isDoctor ? searchInfo.value : user.id).then((res) => {
+		options.value = []
+		records.value = []
+		if (res.data.records.length > 0 && (searchInfo.value || !isDoctor)) {
+			res.data.records.forEach((element) => {
+				options.value.push(element.mrTime)
+				records.value.push(element.content)
+			})
+			ElMessage.success("查询成功")
+		} else if (
+			res.data.records.length == 0 &&
+			(searchInfo.value || !isDoctor)
+		) {
+			ElMessage.warning("未查询到相关记录")
+		}
+	})
+}
 
-const user = useUserStore();
-medicalInfo.value.patientId = ref(user.id)
-const isAdmin = ref(user.isAdmin());
-const isDoctor = ref(user.isDoctor());
-const isPatient = ref(user.isPatient());
-watch(
-  () => user.role,
-  () => {
-    isAdmin.value = user.isAdmin();
-    isDoctor.value = user.isDoctor();
-    isPatient.value = user.isPatient();
-  }
-);
+getRecordsData()
 
-const tableData = ref([]);
-const search = (val) => {
-  const jsonData = JSON.stringify({ id: val.patientId });
-  searchRecord(jsonData).then((res) => {
-    if (res.data && res.data.records && Array.isArray(res.data.records)) {
-      tableData.value = res.data.records;
-    } else {
-      ElMessage.error("返回数据格式不正确");
-    }
-  }).catch((error) => {
-    console.error('搜索记录失败:', error)
-    ElMessage.error("无该患者的医疗记录")
-  });
-};
-
-const formatDateTime = (date) => {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
-  const seconds = String(date.getSeconds()).padStart(2, '0');
-  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-};
-
-const formRef = ref(null);
-const add = () => {
-  medicalInfo.value.mrTime = formatDateTime(new Date());
-  formRef.value.validate((valid) => {
-    if (valid) {
-      addRecord(medicalInfo.value.patientId, medicalInfo.value.mrTime, medicalInfo.value.content).then((res) => {
-        dialogVisible.value = false
-        if (res.status) {
-          ElMessage({
-            message: res.data.msg,
-            type: "success",
-          })
-          medicalInfo.value.content = ""
-        } else {
-          ElMessage({
-            message: res.data.msg,
-            type: "false",
-          })
-        }
-      });
-    }
-  });
-};
-
-const rules = {
-  patientId: [
-    { required: true, message: "请输入病人ID", trigger: "blur" },
-    { pattern: /^\d+$/, message: "病人ID必须为数字", trigger: "blur" },
-  ],
-  content: [
-    { required: true, message: "请填写医疗记录", trigger: "blur" },
-
-  ],
-};
-
+const added = (val) => {
+	searchInfo.value = val
+	showAddRecord.value = false
+	getRecordsData()
+}
 </script>
 
-<style>
-body,
-html {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  overflow: auto;
+<style scoped>
+.main {
+	width: 100%;
 }
-
-.form-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-top: 100px;
-  padding: 0 300px;
+.search-bar {
+	padding-left: 30px;
+	padding-right: 30px;
+	padding-top: 20px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 1rem;
 }
-
-.form-item {
-  margin-left: auto;
-  margin-right: auto;
-  max-width: 200px;
+.search-left {
+	display: flex;
+	align-items: center;
 }
-
-.button-container {
-  margin-top: 20px;
-  display: flex;
-  justify-content: center;
-  gap: 60px;
+.search-right {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
 }
-
-.table-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+.text-area {
+	padding: 20px;
+	width: 95%;
 }
 </style>
